@@ -84,7 +84,7 @@ def twitGet(contPage):
 twitMaxCount = twitGet(twitCountPage + 1)
 
 while True:
-    if twitCount == 200:
+    if twitMaxCount == 200:
         twitCount = 1
         twitMaxCount = twitGet(twitCountPage + 1)
     else:
