@@ -17,7 +17,7 @@ auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_key, access_secret)
 api = tweepy.API(auth)
 
-twitCount: int = 1
+twitCount: int = 0
 twitCountPage: int = 0
 
 def twitGet(contPage):
@@ -52,8 +52,8 @@ def twitGet(contPage):
     
             if yestDay != twitDay:
                 break
-    
-            if not "RT @" in tweet.text[0:4] and not "@" in tweet.text[0]:
+
+            if "@" in tweet.text[0]:
                 twid: int = tweet.id
                 user: str = tweet.user.screen_name
                 date = tweet.created_at
@@ -61,7 +61,31 @@ def twitGet(contPage):
                 favo = int = tweet.favorite_count
                 retw = int = tweet.retweet_count
     
-                cur.execute("INSERT INTO TWITTER_TIMELINE VALUES (%s, %s, %s, %s, %s, %s)",
+                cur.execute("INSERT INTO TWITTER_TIMELINE VALUES (%s, %s, %s, %s, %s, %s, 1)",
+                            (twid, user, date, text, favo, retw))
+                conn.commit()
+
+            elif "RT @" in tweet.text[0:4]:
+                twid: int = tweet.id
+                user: str = tweet.user.screen_name
+                date = tweet.created_at
+                text: str = tweet.text
+                favo = int = tweet.favorite_count
+                retw = int = tweet.retweet_count
+    
+                cur.execute("INSERT INTO TWITTER_TIMELINE VALUES (%s, %s, %s, %s, %s, %s, 2)",
+                            (twid, user, date, text, favo, retw))
+                conn.commit()
+    
+            elif not "RT @" in tweet.text[0:4] and not "@" in tweet.text[0]:
+                twid: int = tweet.id
+                user: str = tweet.user.screen_name
+                date = tweet.created_at
+                text: str = tweet.text
+                favo = int = tweet.favorite_count
+                retw = int = tweet.retweet_count
+    
+                cur.execute("INSERT INTO TWITTER_TIMELINE VALUES (%s, %s, %s, %s, %s, %s, 0)",
                             (twid, user, date, text, favo, retw))
                 conn.commit()
 
@@ -85,7 +109,7 @@ twitMaxCount = twitGet(twitCountPage + 1)
 
 while True:
     if twitMaxCount == 200:
-        twitCount = 1
+        twitCount = 0
         twitMaxCount = twitGet(twitCountPage + 1)
     else:
         break
