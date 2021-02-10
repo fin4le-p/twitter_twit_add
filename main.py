@@ -17,12 +17,14 @@ auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_key, access_secret)
 api = tweepy.API(auth)
 
-twitCount: int = 0
+
 twitCountPage: int = 0
+twitMaxCount: int = 0
+toDayTwit: int = 0
 
 def twitGet(contPage):
-
-    global twitCount
+    global toDayTwit
+    twitCount: int = 0
 
     try:
     
@@ -89,6 +91,8 @@ def twitGet(contPage):
                             (twid, user, date, text, favo, retw))
                 conn.commit()
 
+            toDayTwit += 1
+
         return twitCount
     
     except tweepy.error.TweepError as e:
@@ -113,3 +117,6 @@ while True:
         twitMaxCount = twitGet(twitCountPage + 1)
     else:
         break
+
+print("toDayTwit : " + str(toDayTwit))
+print("success")
