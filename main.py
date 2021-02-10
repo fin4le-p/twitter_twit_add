@@ -53,7 +53,7 @@ def twitGet(contPage):
             twitDay = tweet.created_at.date()
     
             if yestDay != twitDay:
-                break
+                continue
 
             if "@" in tweet.text[0]:
                 twid: int = tweet.id
