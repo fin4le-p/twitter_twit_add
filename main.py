@@ -2,7 +2,6 @@ import tweepy
 import os
 import mysql.connector
 import datetime
-import time
 from os.path import join, dirname
 from dotenv import load_dotenv
 
