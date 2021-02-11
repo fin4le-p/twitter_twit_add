@@ -2,6 +2,7 @@ import tweepy
 import os
 import mysql.connector
 import datetime
+import time
 from os.path import join, dirname
 from dotenv import load_dotenv
 
@@ -15,10 +16,8 @@ access_secret = os.environ.get('ACCESS_SECRET')
 
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_key, access_secret)
-api = tweepy.API(auth)
 
-
-twitCountPage: int = 0
+twitCountPage: int = 1
 twitMaxCount: int = 0
 toDayTwit: int = 0
 
@@ -27,6 +26,8 @@ def twitGet(contPage):
     twitCount: int = 0
 
     try:
+
+        api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
     
         # DBcon
         conn = mysql.connector.connect(
@@ -41,8 +42,6 @@ def twitGet(contPage):
         cur = conn.cursor(buffered=True)
     
         yestDay = datetime.date.today() - datetime.timedelta(days=1)
-    
-        tweet_data = []
     
         Account = "fin4le_p"  # 取得したいユーザーのユーザーIDを代入
         tweets = api.user_timeline(Account, count=200, page=contPage)
@@ -109,12 +108,13 @@ def twitGet(contPage):
         cur.close()
         conn.close()
 
-twitMaxCount = twitGet(twitCountPage + 1)
+print("start_twit_count")
+twitMaxCount = twitGet(twitCountPage)
 
 while True:
     if twitMaxCount == 200:
-        twitCount = 0
-        twitMaxCount = twitGet(twitCountPage + 1)
+        twitCountPage += 1
+        twitMaxCount = twitGet(twitCountPage)
     else:
         break
 
